@@ -1,36 +1,38 @@
 # Project: [PROJECT_NAME]
 
-## Tech Stack
+## 技术栈
 
-- Language / runtime:
-- Framework:
-- Database:
-- Build tool:
-- Package manager:
+- 语言 /运行时：
+- 框架：
+- 数据库：
+- 构建工具：
+- 包管理器：
 
-## Commands
+## 命令
 
-- Build: `[command]`
-- Test: `[command]`
-- Lint: `[command]`
-- Dev server: `[command]`
-- Type check: `[command]`
+| 操作 | 命令 |
+|------|------|
+| 构建 | `[command]` |
+| 测试 | `[command]` |
+| Lint | `[command]` |
+| 开发服务 | `[command]` |
+| 类型检查 | `[command]` |
 
-## Code Conventions
+## 代码规约
 
-- Naming: [e.g. PascalCase components, camelCase utilities, kebab-case files]
-- Exports: [e.g. named exports preferred]
-- Test location: [e.g. next to source file]
-- Styling: [e.g. Tailwind, CSS modules]
-- Error handling: [e.g. use custom Error classes]
+- 命名：[例如：PascalCase 组件，camelCase 工具函数，kebab-case 文件]
+- 导出：[例如：优先 named exports]
+- 测试位置：[例如：与源文件同目录]
+- 样式：[例如：Tailwind，CSS modules]
+- 错误处理：[例如：使用自定义 Error 类]
 
-## Boundaries
+## 边界
 
-- Never commit `.env` files or secrets.
-- Never add dependencies without checking impact.
-- Ask before modifying database schema.
-- Always run tests before committing.
+- 不提交 `.env` 或 secrets。
+- 不在未确认影响时添加依赖。
+- 修改数据库 schema 前先询问。
+- 提交前必须运行测试。
 
-## Patterns
+## 典型模式
 
-[Add one short, well-written example that represents the project's style.]
+[写一个简短、高质量的代码示例，体现项目风格。]

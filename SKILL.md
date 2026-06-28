@@ -1,156 +1,162 @@
 ---
 name: claude-code-starter
-description: One-shot setup for beginners/new machines. Installs CLAUDE.md, recommended skills, plugins, and usage docs.
-trigger: /claude-starter
+description: 一键初始化 Claude Code 最佳实践配置，安装 CLAUDE.md、推荐 Skills、Plugins 和 MCP，并生成使用说明。
+triggers:
+  - /claude-starter
+  - /claude-code-starter
+  - 初始化 claude code
+  - 配置 claude code
+  - 新电脑 claude code
 disable-model-invocation: true
 ---
 
 # /claude-starter
 
-Set up Claude Code best-practice configuration on a new machine or project.
+在新电脑或新项目中快速搭建 Claude Code 最佳实践环境。
 
-## When to use
+## 使用场景
 
-- New machine / fresh Claude Code install.
-- Onboarding a teammate.
-- Want a consistent baseline of rules, skills, plugins, and docs.
+- 新机器或刚安装 Claude Code
+- 新成员入职
+- 希望统一规则、Skills、Plugins 和文档基线
 
-## Usage
+## 用法
 
+```text
+/claude-starter              # 交互式向导
+/claude-starter global       # 安装用户级 CLAUDE.md + 使用说明
+/claude-starter project      # 为当前项目生成 CLAUDE.md + 使用说明
+/claude-starter docs         # 仅刷新使用说明
 ```
-/claude-starter              # interactive wizard
-/claude-starter global       # install user-level CLAUDE.md + docs
-/claude-starter project      # create ./CLAUDE.md for current project + docs
-/claude-starter docs         # regenerate usage docs only
-```
 
-## What it installs
+## 安装内容
 
-1. **CLAUDE.md** — global or project rules file.
-2. **Recommended skills** — verifies they are present.
-3. **Recommended plugins** — generates `/plugin install` commands (manual execution).
-4. **USAGE.md** — quick-reference guide for everything installed.
+1. **CLAUDE.md** — 全局或项目级规则文件
+2. **MCP 配置** — 连接 GitHub、文件系统、网页抓取
+3. **推荐 Skills** — 验证是否已安装，缺失时给出安装命令
+4. **推荐 Plugins** — 生成 `/plugin install` 命令（需手动在 Claude Code 中执行）
+5. **USAGE.md** — 当前环境的快速参考手册
 
-## Safety rules
+## 安全规则
 
-- Never overwrite an existing file without explicit user confirmation.
-- Always read an existing file before offering to overwrite.
-- If overwriting, create a timestamped backup first.
-- Do not run `/plugin install` automatically; only generate the commands.
+- 覆盖已有文件前必须征求确认
+- 覆盖前先读取原文件内容
+- 如需备份，先复制到 `target.<timestamp>.bak`
+- 不自动执行 `/plugin install`，只生成命令
+- 不自动修改 `settings.json`，只生成建议配置
 
-## Step-by-step workflow
+## 步骤工作流
 
-### Step 1 — Determine mode
+### 步骤 1 — 确定模式
 
-If `ARGUMENTS` is empty, ask the user:
-- `global` — configure user-level `~/.claude/CLAUDE.md`
-- `project` — configure `./CLAUDE.md` in the current working directory
-- `docs` — regenerate usage docs only
+如果 `ARGUMENTS` 为空，询问用户：
 
-If the argument is not one of these, tell the user it's invalid and show usage.
+- `global` — 配置 `~/.claude/CLAUDE.md`
+- `project` — 为当前工作目录生成 `./.claude/CLAUDE.md`
+- `docs` — 仅刷新使用说明
 
-### Step 2 — Detect environment
+### 步骤 2 — 检测环境
 
-Run:
 ```bash
 mkdir -p "$HOME/.claude/claude-starter"
 echo "$HOME/.claude"
 ```
 
-Set:
+设置：
+
 - `CLAUDE_HOME = $HOME/.claude`
 - `SKILL_DIR = $CLAUDE_HOME/skills/claude-code-starter`
 
-### Step 3 — Install or update CLAUDE.md
+### 步骤 3 — 安装 CLAUDE.md
 
-Choose template based on mode:
-- `global`: source = `$SKILL_DIR/templates/global-claude.md`, target = `$CLAUDE_HOME/CLAUDE.md`
-- `project`: source = `$SKILL_DIR/templates/project-claude.md`, target = `./CLAUDE.md`
-- `docs`: skip this step.
+根据模式选择模板：
 
-Read the source template. Then check if target exists:
-- If target does not exist: write target with template content.
-- If target exists: read target, show user the first 40 lines or a diff summary, and ask `overwrite / skip / backup-and-overwrite`. If backup, copy target to `target.<timestamp>.bak` before overwriting.
+| 模式 | 源模板 | 目标路径 |
+|------|--------|----------|
+| global | `$SKILL_DIR/templates/global-claude.md` | `$CLAUDE_HOME/CLAUDE.md` |
+| project | `$SKILL_DIR/templates/project-claude.md` | `./.claude/CLAUDE.md` |
+| docs | 跳过 | — |
 
-After writing, print:
-```
-Installed <mode> CLAUDE.md at <path>
-```
+操作逻辑：
 
-### Step 4 — Verify recommended skills
+- 目标不存在：直接写入
+- 目标已存在：展示前 40 行或 diff 摘要，询问 `overwrite / skip / backup-and-overwrite`
+- 备份：先复制为 `target.<timestamp>.bak`
 
-Read `$SKILL_DIR/recommended-skills.md`. Parse each line starting with `- ` followed by a backtick skill name. For each skill name:
-- Check if `$CLAUDE_HOME/skills/<name>/SKILL.md` exists.
-- Record status: present / missing.
+完成后输出：
 
-Do not install missing skills automatically. Print a table:
-```
-Recommended skills:
-- using-agent-skills          present
-- context-engineering         present
-- spec-driven-development     missing
-...
+```text
+已安装 <mode> CLAUDE.md 位于 <path>
 ```
 
-If any are missing, add them to the "Missing skills" section of the generated usage doc.
+### 步骤 4 — 验证推荐 Skills
 
-### Step 5 — Generate plugin install commands
+读取 `$SKILL_DIR/recommended-skills.md`。对每个 skill：
 
-Read `$SKILL_DIR/recommended-plugins.md`. Parse each line starting with `- ` followed by a backtick plugin spec like `plugin-name@marketplace`.
+- 检查 `$CLAUDE_HOME/skills/<name>/SKILL.md` 是否存在
+- 记录状态：present / missing
 
-Generate two files:
-- `$CLAUDE_HOME/claude-starter/install-plugins.sh`
-- `$CLAUDE_HOME/claude-starter/install-plugins.ps1`
+不自动安装缺失的 skill，而是生成一个安装表，包含：
 
-Each contains one command per plugin:
-```bash
-/plugin install commit-commands@claude-plugins-official
-/plugin install code-review@claude-plugins-official
-...
-```
+- skill 名称
+- 当前状态
+- 安装来源（GitHub URL 或 marketplace 命令）
 
-The PowerShell version uses the same `/plugin install ...` lines.
+### 步骤 5 — 生成 Plugin 安装命令
 
-Also generate a markdown command list to embed in the usage doc.
+读取 `$SKILL_DIR/recommended-plugins.md`，为每个 plugin 生成：
 
-Do not execute the commands.
-
-### Step 6 — Generate usage docs
-
-Read `$SKILL_DIR/USAGE.md` as the base. Create `$CLAUDE_HOME/claude-starter/USAGE.md` by copying the base and appending:
-
-```markdown
-## Current setup status
-
-Generated: <ISO timestamp>
-
-### CLAUDE.md
-- Mode: <global|project|skipped>
-- Path: <path>
-
-### Skills status
-<copy the table from Step 4>
-
-### Plugin install commands
-Run these in Claude Code:
 ```text
 /plugin install commit-commands@claude-plugins-official
-...
-```
 ```
 
-If mode is `project`, also write `./CLAUDE_USAGE.md` with the same content.
+注意：这些命令需要在 **Claude Code 会话内** 运行，不能直接放到 shell 脚本里执行。
 
-### Step 7 — Final report
+生成文件：
 
-Print a concise summary:
-- What was created or updated.
-- What was skipped.
-- The exact commands the user should run next to install plugins.
-- How to use the starter kit going forward (`/claude-starter docs` to refresh docs).
+- `$CLAUDE_HOME/claude-starter/install-plugins.md` — Claude Code 中粘贴执行的命令列表
 
-## Failure handling
+### 步骤 6 — 安装 MCP 配置
 
-- If `$SKILL_DIR` or any required bundled file is missing, stop and report the missing file path.
-- If a read/write operation fails, report the error and stop.
-- If the user declines to overwrite, skip that step and continue.
+将 `$SKILL_DIR/recommended-mcp.json` 中的配置合并到 `$CLAUDE_HOME/settings.json`。
+
+合并规则：
+
+- 如果 `settings.json` 不存在，直接写入
+- 如果已存在，合并 `mcpServers`，不覆盖现有的 server
+- 需要用户确认后才修改
+
+完成后提醒用户：
+
+- 填充 GitHub token
+- 填充 filesystem 允许访问的路径
+
+### 步骤 7 — 生成使用文档
+
+基于 `$SKILL_DIR/USAGE.md` 生成：
+
+- `$CLAUDE_HOME/claude-starter/USAGE.md`
+- 如果模式是 `project`，同时生成 `./CLAUDE_USAGE.md`
+
+附加：
+
+- 生成时间
+- CLAUDE.md 安装状态
+- Skills 验证表
+- Plugin 安装命令
+- MCP 配置状态
+
+### 步骤 8 — 最终报告
+
+输出简洁摘要：
+
+- 哪些文件已创建/更新
+- 哪些步骤被跳过
+- 接下来需要手动执行的命令
+- 如何继续使用（`/claude-starter docs` 刷新文档）
+
+## 失败处理
+
+- 如果 `$SKILL_DIR` 或任何必需的打包文件缺失，停止并报告缺失路径
+- 如果读写操作失败，报告错误并停止
+- 如果用户拒绝覆盖，跳过该步骤并继续
