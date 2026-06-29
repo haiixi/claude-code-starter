@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: 对代码进行审查，发现潜在问题、安全风险和可维护性问题。
+description: Conducts multi-axis code review. Use before merging any change, when reviewing code written by yourself, another agent, or a human.
 triggers:
   - /code-review
   - 代码审查
@@ -9,15 +9,63 @@ triggers:
 
 # Code Review
 
-## 审查维度
+## Overview
 
-1. **正确性**：逻辑是否正确，边界情况是否处理
-2. **安全性**：是否有注入、越权、硬编码密钥等
-3. **可维护性**：命名、结构、重复、复杂度
-4. **测试**：是否有测试，测试是否合理
-5. **性能**：是否有明显性能问题
+Multi-dimensional code review with quality gates. Every change gets reviewed before merge — no exceptions. Review covers five axes: correctness, readability, architecture, security, and performance.
 
-## 安全扫描重点
+**The approval standard:** Approve a change when it definitely improves overall code health, even if it isn't perfect.
+
+## When to Use
+
+- Before merging any PR or change
+- After completing a feature implementation
+- When another agent or model produced code you need to evaluate
+- When refactoring existing code
+- After any bug fix (review both the fix and the regression test)
+
+## The Five-Axis Review
+
+### 1. Correctness
+
+- Does it match the spec or task requirements?
+- Are edge cases handled (null, empty, boundary values)?
+- Are error paths handled (not just the happy path)?
+- Does it pass all tests? Are the tests actually testing the right things?
+
+### 2. Readability & Simplicity
+
+- Are names descriptive and consistent with project conventions?
+- Is the control flow straightforward?
+- Is the code organized logically?
+- Could this be done in fewer lines?
+- Are abstractions earning their complexity?
+
+### 3. Architecture
+
+- Does it follow existing patterns or introduce a new one?
+- Does it maintain clean module boundaries?
+- Is there code duplication that should be shared?
+- Are dependencies flowing in the right direction?
+- Is the abstraction level appropriate?
+
+### 4. Security
+
+- Is user input validated and sanitized?
+- Are secrets kept out of code, logs, and version control?
+- Is authentication/authorization checked where needed?
+- Are SQL queries parameterized (no string concatenation)?
+- Are outputs encoded to prevent XSS?
+- Is data from external sources treated as untrusted?
+
+### 5. Performance
+
+- Any N+1 query patterns?
+- Any unbounded loops or unconstrained data fetching?
+- Any synchronous operations that should be async?
+- Any missing pagination on list endpoints?
+- Any large objects created in hot paths?
+
+## Security Scan Focus
 
 - 硬编码密钥 / token / 密码
 - SQL 注入（字符串拼接）
@@ -26,12 +74,60 @@ triggers:
 - `eval()` / `exec()` 调用
 - 路径穿越
 
-## 输出格式
+## Review Findings Severity
 
-| 优先级 | 问题 | 位置 | 建议 |
-|--------|------|------|------|
-| P0 | ... | ... | ... |
-| P1 | ... | ... | ... |
-| P2 | ... | ... | ... |
+Label every comment with its severity:
 
-P0 = 必须修复，P1 = 建议修复，P2 = 可以记录
+| Prefix | Meaning | Action |
+|--------|---------|--------|
+| **Critical:** | Blocks merge | Security vulnerability, data loss, broken functionality |
+| **Important:** | Should fix before merge | Logic error, maintainability issue |
+| **Nit:** | Minor, optional | Formatting, style preferences |
+| **Optional:** / **Consider:** | Suggestion | Worth considering but not required |
+| **FYI** | Informational only | No action needed |
+
+## Output Format
+
+```markdown
+## Review: [Change title]
+
+### Summary
+[Brief overall assessment]
+
+### Findings
+
+| Severity | Axis | Issue | Location | Suggestion |
+|----------|------|-------|----------|------------|
+| Critical | Security | 硬编码 API key | src/config.ts | 改用环境变量 |
+| Important | Correctness | 未处理空值 | src/user.ts:42 | 添加 null check |
+| Nit | Readability | 变量名 temp | src/utils.ts:15 | 改为具体名称 |
+
+### Verdict
+- [ ] Approve — Ready to merge
+- [ ] Request changes — Issues must be addressed
+```
+
+## Review Checklist
+
+- [ ] I understand what this change does and why
+- [ ] Change matches spec/task requirements
+- [ ] Edge cases handled
+- [ ] Error paths handled
+- [ ] Tests cover the change adequately
+- [ ] Names are clear and consistent
+- [ ] No unnecessary complexity
+- [ ] Follows existing patterns
+- [ ] No secrets in code
+- [ ] Input validated at boundaries
+- [ ] No N+1 patterns
+- [ ] Tests pass
+- [ ] Build succeeds
+
+## Red Flags
+
+- PRs merged without any review
+- "LGTM" without evidence of actual review
+- Security-sensitive changes without security-focused review
+- Large PRs that are "too big to review properly" (split them)
+- No regression tests with bug fix PRs
+- Accepting "I'll fix it later" — it rarely happens

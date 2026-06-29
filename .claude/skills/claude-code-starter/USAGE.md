@@ -30,8 +30,13 @@
 | coding-standards | `/coding-standards` | 检查代码规范 | 简易 |
 | test-workflow | `/test-workflow` | TDD 流程 | 简易 |
 | git-commit | `/git-commit` | 生成规范提交信息 | 简易 |
-| code-review | `/code-review` | 代码审查 | 简易 |
+| code-review | `/code-review` | 代码审查 | 五轴审查 |
 | refactor-clean | `/refactor-clean` | 清理死代码 | 简易 |
+| systematic-debugging | `/systematic-debugging` | bug 根因分析 | 专业 |
+| verification-before-completion | `/verification-before-completion` | 完成前验证 | 专业 |
+| planning-and-task-breakdown | `/plan` | 拆解复杂任务 | 专业 |
+| test-driven-development | `/tdd` | 严格 TDD 开发 | 专业 |
+| writing-skills | `/writing-skills` | 编写新 skill | 参考 |
 
 ### 内置 skill 使用示例
 
@@ -51,6 +56,25 @@
 
 # 清理未使用的 import 和变量
 /refactor-clean
+
+# 系统化调试 bug
+/systematic-debugging
+给 order_service.create_order 报 "Course not found" 的 bug 做根因分析
+
+# 完成前验证
+/verification-before-completion
+检查这次提交是否满足验证清单
+
+# 拆解复杂任务
+/plan
+给校区课表权限优化做实施计划
+
+# 严格 TDD
+/tdd
+给 CourseScheduleService 写测试并实现
+
+# 学习如何写 skill
+/writing-skills
 ```
 
 ## 推荐 Skills 速查

@@ -53,14 +53,17 @@
 
 ## 8. 推荐工具
 
+可选但常用：
+
 - `/using-agent-skills` — 发现合适的 workflow skill。
 - `/coding-standards` — 检查代码规范。
-- `/code-review` — 合并前代码审查。
+- `/code-review` — 合并前代码审查（5 轴）。
 - `/git-commit` — 生成规范提交信息。
 - `/systematic-debugging` — 遇到 bug 先系统化根因分析。
 - `/verification-before-completion` — 完成前强制验证。
-
----
+- `/plan` — 拆解复杂任务为可执行计划。
+- `/tdd` — 严格按照红-绿-重构流程开发。
+- `/writing-skills` — 编写或审查 skill。
 
 ### ===== 公共规则结束，下方是您的自定义规则（不会被同步覆盖）=====
 

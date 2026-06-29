@@ -29,7 +29,7 @@ confidence: high
 | `.claude/CLAUDE.md` | 默认全局规则模板 |
 | `.claude/settings.json` | MCP 配置模板 |
 | `.claude/skills/claude-code-starter/` | 主引导 Skill |
-| `.claude/skills/{coding-standards,test-workflow,git-commit,code-review,refactor-clean}` | 内置保底 Skills |
+| `.claude/skills/{coding-standards,test-workflow,git-commit,code-review,refactor-clean,systematic-debugging,verification-before-completion,test-driven-development,planning-and-task-breakdown,writing-skills}` | 内置保底 Skills |
 
 ## 安装方法
 
@@ -85,10 +85,11 @@ cp -r .claude <your-project>/.claude
 ```bash
 # 移除安装
 rm -rf ~/.claude/skills/claude-code-starter
-rm -rf ~/.claude/skills/{coding-standards,test-workflow,git-commit,code-review,refactor-clean}
+rm -rf ~/.claude/skills/{coding-standards,test-workflow,git-commit,code-review,refactor-clean,systematic-debugging,verification-before-completion,test-driven-development,planning-and-task-breakdown,writing-skills}
 rm -f ~/.claude/CLAUDE.md
 rm -f ~/.claude/settings.json
 rm -rf ~/.claude/claude-starter
+rm -rf ~/.claude/knowledge-base
 
 # 如果之前备份过，可以恢复
 mv ~/.claude.bak.<timestamp> ~/.claude
