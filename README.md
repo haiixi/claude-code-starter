@@ -5,7 +5,7 @@ updated: 2026-06-28
 type: project
 tags: [programming, framework]
 sources:
-  - https://github.com/haiixi/claude-code-starter
+  - https://github.com/Haiixi/claude-code-starter
 confidence: high
 ---
 
